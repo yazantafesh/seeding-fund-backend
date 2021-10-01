@@ -3,7 +3,8 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const SECRET = process.env.SECRET || 'supersecret';
+const SECRET = process.env.SECRET;
+const projectSchema = require('./projectModel').projectSchema
 
 //Defining the user schema with the available options
 
@@ -18,6 +19,7 @@ const userSchema = mongoose.Schema({
     default: 'projectOwner',
     enum: ['projectOwner', 'admin'],
   },
+  projects:[projectSchema]
 },
   {
     toJSON: { virtuals: true },
@@ -29,11 +31,13 @@ const userSchema = mongoose.Schema({
 
 userSchema.virtual('capabilities').get(function () {
   const acl = {
-    projectOwner: ['read', 'create'],
-    admin: ['read', 'create', 'update'],
+    projectOwner: ['read', 'create', 'delete'],
+    admin: ['read', 'create', 'update', 'delete'],
   };
   return acl[this.role];
 });
+
+//Hashing the password before saving to the DB
 
 userSchema.pre('save', async function () {
   this.password = await bcrypt.hash(this.password, 10);
