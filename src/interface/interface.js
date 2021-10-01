@@ -35,17 +35,18 @@ class Interface {
     }
   }
 
-  deleteProject(obj) {
-    this.model.find({ email: obj.email }, (error, userData) => {
-      const newProjectArr = userData[0].projects.filter((project) => {
+  async deleteProject(obj) {
+    let user = await this.model.findOne({ email: obj.email })
+
+      const newProjectArr = user.projects.filter((project) => {
         if (project.name !== obj.name) {
           return project;
         }
       })
-      userData[0].projects = newProjectArr;
-      userData[0].save();
-      return userData[0].projects;
-    })
+      user.projects = newProjectArr;
+      await user.save();
+      return user.projects;
+
   }
 
   // update(docName) {
