@@ -4,12 +4,11 @@ const express = require('express');
 const router = express.Router();
 const bearerAuth = require('../middlewares/bearer-auth');
 const acl = require('../middlewares/acl-middleware');
-const userModel = require('../models/userModel');
 const Interface = require('../interface/interface');
 
 //Here we have the requests
 
-router.get('/read', bearerAuth, async (req, res) => {
+router.get('/read', bearerAuth, acl('read'), async (req, res) => {
   const { email } = req.query;
   const userData = await Interface.readProjects(email)
   res.json( userData );
@@ -32,8 +31,10 @@ router.delete('/delete', bearerAuth, acl('delete'), async (req, res) => {
   res.send(afterDeletion);
 });
 
-// router.put('/update', bearerAuth, acl('update'), (req, res) => {
-//   res.send('I can Update');
-// });
+router.put('/update', bearerAuth, acl('update'), async (req, res) => {
+  const { name, email, status } = req.body;
+  await Interface.updateProject({ name, email, status });
+  res.send('updated');
+});
 
 module.exports = router;

@@ -32,7 +32,7 @@ const userSchema = mongoose.Schema({
 userSchema.virtual('capabilities').get(function () {
   const acl = {
     projectOwner: ['read', 'create', 'delete'],
-    admin: ['read', 'create', 'update', 'delete'],
+    admin: ['read', 'update'],
   };
   return acl[this.role];
 });
