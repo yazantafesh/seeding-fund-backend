@@ -11,24 +11,24 @@ const Interface = require('../interface/interface');
 
 router.get('/read', bearerAuth, async (req, res) => {
   const { email } = req.query;
-  const projects = await Interface.readProjects(email)
-  res.json({ projects });
+  const userData = await Interface.readProjects(email)
+  res.json( userData );
 });
 
 router.post('/create', bearerAuth, acl('create'), async (req, res) => {
-  const { name, description, sector, status, email } = req.body;
+  const { name, description, sector, requiredFunding, urgency, email } = req.body;
+
   try {
-    const createdProject = await Interface.createProject({ name, description, sector, status, email });
-    console.log(createdProject);
-    res.json({ createdProject });
+    const updatedUserData = await Interface.createProject({ name, description, sector, requiredFunding, urgency, email });
+    res.json( updatedUserData );
   } catch (error) {
     res.json({error: error.message});
   }
 });
 
-router.delete('/delete', bearerAuth, acl('delete'), (req, res) => {
+router.delete('/delete', bearerAuth, acl('delete'), async (req, res) => {
   const { name, email } = req.body;
-  const afterDeletion = Interface.deleteProject({ name, email });
+  const afterDeletion = await Interface.deleteProject({ name, email });
   res.send(afterDeletion);
 });
 
