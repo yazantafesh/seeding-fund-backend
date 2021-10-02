@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
     default: 'projectOwner',
     enum: ['projectOwner', 'admin'],
   },
-  projects:[projectSchema]
+  projects: [projectSchema]
 },
   {
     toJSON: { virtuals: true },
@@ -32,32 +32,37 @@ const userSchema = mongoose.Schema({
 userSchema.virtual('capabilities').get(function () {
   const acl = {
     projectOwner: ['read', 'create', 'delete'],
-    admin: ['read', 'create', 'update', 'delete'],
+    admin: ['read', 'update'],
   };
   return acl[this.role];
-});
-
-//Hashing the password before saving to the DB
-
-userSchema.pre('save', async function () {
-  this.password = await bcrypt.hash(this.password, 10);
 });
 
 //Basic authentication
 
 userSchema.statics.authenticateBasic = async function (email, password) {
   const user = await this.findOne({ email });
-  const valid = await bcrypt.compare(password, user.password);
-  if (!valid) {
-    throw new Error('Invalid Login');
-  }
-  return user;
+    const valid = await bcrypt.compare(password, user.password);
+    console.log(valid)
+    if (!valid) {
+      throw new Error('Invalid Login');
+    }
+    return user;
+    
+ 
 };
 
 //Token generation
 
 userSchema.statics.generateToken = function (user) {
-  return jwt.sign({ email: user.email, capabilities: user.capabilities }, SECRET);
+  let userData = {
+    email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    role: user.role,
+    capabilities: user.capabilities
+  }
+
+  return jwt.sign(userData, SECRET);
 };
 
 //Token authentication
