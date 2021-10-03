@@ -8,8 +8,8 @@ const projectSchema = mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   sector: { type: String, required: true },
-  requiredFunding: {type: String, required: true},
-  urgency: {type: String, required: true},
+  requiredFunding: { type: String, required: true },
+  urgency: { type: String, required: true },
   status: { type: String, required: true, default: 'Pending' },
 })
 

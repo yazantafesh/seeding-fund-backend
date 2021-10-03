@@ -10,8 +10,9 @@ class Interface {
 
   async createProject(obj) {
     try {
-      console.log(obj)
       let user = await this.model.findOne({ email: obj.email });
+
+      //This step insures no repeated project names
 
       for (let i = 0; i < user.projects.length; i++) {
         if (user.projects[i].name === obj.name) {
@@ -25,7 +26,9 @@ class Interface {
         requiredFunding: obj.requiredFunding,
         urgency: obj.urgency
       });
+
       await user.save()
+
       return {
         email: user.email,
         firstName: user.firstName,
@@ -33,16 +36,21 @@ class Interface {
         role: user.role,
         projects: user.projects
       };
+
     } catch (error) {
       return error;
     }
   };
 
-  //This returns all the found projects for the specified user
+  //This returns all the found projects for the specified user depending on the role
 
   async readProjects(email) {
     if (email) {
+
+      //for Project Owners
+
       let user = await this.model.findOne({ email: email });
+
       if (user.role === 'projectOwner') {
         return {
           email: user.email,
@@ -51,11 +59,17 @@ class Interface {
           role: user.role,
           projects: user.projects
         };
+
+        //for Admins
+
       } else if (user.role === 'admin') {
         let allUsersData = await this.model.find({});
         let allProjects = [];
+
         allUsersData.forEach((user) => {
+
           let userProjects = [];
+
           user.projects.forEach((project) => {
             userProjects.push({
               name: project.name,
@@ -65,17 +79,33 @@ class Interface {
               urgency: project.urgency,
               status: project.status,
               email: user.email
-            })
-          })
+            });
+          });
           allProjects = [...allProjects, ...userProjects]
-          console.log(userProjects);
+        });
+
+        let projectStatusData = {
+          Accepted: 0,
+          Declined: 0,
+          Pending: 0
+        };
+
+        allProjects.forEach((project) => {
+          if (project.status === 'Accepted') {
+            projectStatusData.Accepted += 1;
+          } else if (project.status === 'Declined') {
+            projectStatusData.Declined += 1;
+          } else if (project.status === 'Pending') {
+            projectStatusData.Pending += 1;
+          };
         });
         return {
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
           role: user.role,
-          projects: allProjects
+          projects: allProjects,
+          projectStatus: projectStatusData
         };
       }
     }
@@ -90,9 +120,11 @@ class Interface {
       if (project.name !== obj.name) {
         return project;
       }
-    })
+    });
+
     user.projects = newProjectArr;
     await user.save();
+
     return {
       email: user.email,
       firstName: user.firstName,
@@ -100,8 +132,9 @@ class Interface {
       role: user.role,
       projects: user.projects
     };
-
   }
+
+  //This handles updating the status of the project
 
   async updateProject(obj) {
     let user = await this.model.findOne({ email: obj.email })
@@ -114,10 +147,7 @@ class Interface {
     })
     user.projects = newProjectArr;
     await user.save();
-  }
-
-  
-
+  };
 }
 
 module.exports = new Interface(userModel);

@@ -5,10 +5,10 @@ const User = require('../models/userModel');
 module.exports = async (req, res, next) => {
   //Here we make sure we have authorization headers
   if (!req.headers.authorization) {
-    next('missing auth headers!');
+    next('Missing auth headers!');
     return;
   }
-    // Here we make sure we have bearer in the auth headers
+  // Here we make sure we have bearer in the auth headers
   const headers = req.headers.authorization.split(' ');
   if (headers[0] !== 'Bearer') {
     next('Invalid auth headers!');

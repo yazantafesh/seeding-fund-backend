@@ -5,16 +5,16 @@ const User = require('../models/userModel');
 
 
 module.exports = async (req, res, next) => {
-  
+
   //Here we make sure we have authorization headers
   if (!req.headers.authorization) {
-    next('Invalid Login');
+    next('Invalid Login (Auth headers not found)');
     return;
   }
   // Here we make sure we have basic in the auth headers
   let authHeaders = req.headers.authorization.split(' ');
   if (authHeaders[0] !== 'Basic') {
-    next('Invalid Login');
+    next('Invalid Login (Problem with auth headers)');
     return;
   }
 
@@ -25,6 +25,6 @@ module.exports = async (req, res, next) => {
     req.token = User.generateToken(validUser);
     next();
   } catch (error) {
-    next('Invalid Login');
+    next('Invalid Login (Authentication failed)');
   }
 };
