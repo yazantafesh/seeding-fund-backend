@@ -10,8 +10,6 @@ A company called “seedingfund” that funding projects and looking to create p
 
 ---
 
-- ### [PR](https://github.com/yazantafesh/seeding-fund-backend/pull/5)
-
 - ### [Front End Repo](https://github.com/yazantafesh/seeding-fund-frontend)
 
 ---
