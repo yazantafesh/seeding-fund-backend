@@ -18,7 +18,7 @@ A company called “seedingfund” that funding projects and looking to create p
 
 - ### Deploy links
 
-  - [Deployment]()
+  - [Deployment](https://seeding-fund.herokuapp.com/)
 
 ---
 
