@@ -38,7 +38,7 @@ class Interface {
       };
 
     } catch (error) {
-      return error;
+      return error.message;
     }
   };
 
