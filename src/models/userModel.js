@@ -23,7 +23,6 @@ const userSchema = mongoose.Schema({
 },
   {
     toJSON: { virtuals: true },
-
   }
 );
 
@@ -41,14 +40,12 @@ userSchema.virtual('capabilities').get(function () {
 
 userSchema.statics.authenticateBasic = async function (email, password) {
   const user = await this.findOne({ email });
-    const valid = await bcrypt.compare(password, user.password);
-    console.log(valid)
-    if (!valid) {
-      throw new Error('Invalid Login');
-    }
-    return user;
-    
- 
+  const valid = await bcrypt.compare(password, user.password);
+
+  if (!valid) {
+    throw new Error('Invalid Login');
+  };
+  return user;
 };
 
 //Token generation
@@ -60,8 +57,7 @@ userSchema.statics.generateToken = function (user) {
     lastName: user.lastName,
     role: user.role,
     capabilities: user.capabilities
-  }
-
+  };
   return jwt.sign(userData, SECRET);
 };
 

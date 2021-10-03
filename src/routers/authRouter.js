@@ -10,9 +10,9 @@ const bcrypt = require('bcrypt');
 
 router.post('/up', async (req, res) => {
   try {
-    const {email, password, firstName, lastName, role, projects} = req.body;
+    const { email, password, firstName, lastName, role, projects } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const userData = {email, password:hashedPassword, firstName, lastName, role, projects}
+    const userData = { email, password: hashedPassword, firstName, lastName, role, projects }
     const user = new User(userData);
     const doc = await user.save();
     const token = User.generateToken(doc);
@@ -27,7 +27,7 @@ router.post('/up', async (req, res) => {
 router.post('/in', basicAuth, (req, res) => {
   try {
     res.json({ token: req.token });
-    
+
   } catch (error) {
     console.log(error.message)
   }
